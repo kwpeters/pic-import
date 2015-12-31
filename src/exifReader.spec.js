@@ -1,5 +1,7 @@
-/* global describe  */
+/* global describe */
+/* global expect */
 /* global it */
+
 var exifReader = require("./exifReader");
 
 

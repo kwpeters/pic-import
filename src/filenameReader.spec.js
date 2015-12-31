@@ -1,3 +1,7 @@
+/* global describe */
+/* global expect */
+/* global it */
+
 var filenameReader = require("./filenameReader");
 
 
