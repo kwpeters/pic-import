@@ -1,0 +1,20 @@
+{
+  "name": "pic-import",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/pic-import.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kevin Peters",
+  "license": "MIT",
+  "dependencies": {
+    "exif": "^0.4.0",
+    "q": "^1.4.1"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-util": "^3.0.7",
+    "jasmine-node": "^1.14.5"
+  }
+}
