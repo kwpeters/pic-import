@@ -1,5 +1,7 @@
 var Directory    = require("./directory"),
-    DatestampDir = require("./datestampDir");
+    exifReader   = require("./exifReader"),
+    DatestampDir = require("./datestampDir"),
+    File         = require("./file");
 
 //region Helper Functions
 
@@ -17,7 +19,7 @@ function createDateDirMap(libraryDir) {
         subdirs;
 
     subdirs = libDir.getSubdirectories()
-        .then(function (subdirs) {
+        .done(function (subdirs) {
             // We are only concerned with the subdirectories that have a date in them.
             return subdirs.reduce(
                 function (prev, curSubdir) {
@@ -30,18 +32,8 @@ function createDateDirMap(libraryDir) {
                 },
                 {}
             );
-        })
-        .done(
-            function (dateDirMap) {
-                console.log("Done indexing photo library.  Datestamped folders:",
-                    Object.keys(dateDirMap).length
-                );
-                return dateDirMap;
-            }
-        );
+        });
 }
-
-
 
 //endregion
 
@@ -60,7 +52,7 @@ var PhotoLibrary = (function () {
      */
     function PhotoLibrary(rootDir) {
 
-        if (!Directory.isDirectory(rootDir)) {
+        if (!Directory.existsSync(rootDir)) {
             throw new Error("Directory does not exist:" + rootDir);
         }
 
@@ -69,7 +61,38 @@ var PhotoLibrary = (function () {
             dateDirMapP: createDateDirMap(rootDir)
         };
 
-        this.import = function importPhoto(photoPath) {
+
+        /**
+         * Imports the specified file into this library.
+         * @method
+         * @param {File} file - The file to import
+         * @returns {Promise} ReturnDescription
+         */
+        this.import = function importPhoto(file) {
+            // todo: Implement this.
+
+            if (!(file instanceof File)) {
+                throw new Error("Parameter is not a File.");
+            }
+
+            return file.exists()
+                .then(function (fileStats) {
+                    if (!fileStats) {
+                        throw new Error("File does not exist: " + file.toString());
+                    }
+
+
+
+                });
+
+            if (!file.exists()) {
+                throw new Error("File does not exist: " + file);
+            }
+
+
+            exifReader.getCreateDate(file);
+
+
 
         };
     }

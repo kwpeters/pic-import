@@ -12,7 +12,7 @@ describe("PhotoLibrary", function () {
 
         it("can be created",
             function () {
-                var pl = new PhotoLibrary("./foo/");
+                var pl = new PhotoLibrary(__dirname);
                 expect(pl).toBeDefined();
             }
         );

@@ -3,6 +3,8 @@ var fs   = require("fs"),
     q    = require("q");
 
 var Directory = (function () {
+    "use strict";
+
     function Directory(dir) {
 
         var priv = {dir: dir};
@@ -26,6 +28,7 @@ var Directory = (function () {
         this.split = function split() {
             return priv.dir.split(path.sep);
         };
+
 
         /**
          * Gets a promise for the subdirectories present in this directory.
@@ -69,22 +72,47 @@ var Directory = (function () {
                 .then(
                     function (dirEntryInfos) {
                         // Keep only the directory entries that are directories.
-                        return dirEntryInfos.filter(
-                            function (curFileInfo) {
-                                return curFileInfo.stats.isDirectory();
-                            });
+                        return dirEntryInfos
+                            .filter(
+                                function (curDirEntryInfo) {
+                                    return curDirEntryInfo.stats.isDirectory();
+                                }
+                            );
                     }
                 )
                 .then(
                     function (dirInfos) {
                         // Return only the dirEntry property to return to the
                         // caller.
-                        return dirInfos.map(
-                            function (curDirInfo) {
-                                return curDirInfo.dirEntry;
-                            });
+                        return dirInfos
+                            .map(
+                                function (curDirInfo) {
+                                    return curDirInfo.dirEntry;
+                                }
+                            );
                     }
                 );
+        };
+
+
+        /**
+         * Checks to see if this directory exists.
+         * @method
+         * @returns {Promise} A promise that is fulfilled with the directory's stats if it
+         * exists.  It is resolved with false otherwise.
+         */
+        this.exists = function exists() {
+            return Directory.exists(priv.dir);
+        };
+
+
+        /**
+         * Checks to see if the specified directory exists.
+         * @returns {fs.Stats|boolean} If the directory exists, its fs.Stats object is
+         * returned.  If the directory does not exist, false is returned.
+         */
+        this.existsSync = function () {
+            return Directory.existsSync(priv.dir);
         };
 
     }
@@ -92,20 +120,50 @@ var Directory = (function () {
     // Static functions
 
     /**
-     * Determines whether the specified path is a directory.
-     * @static
-     * @param {string} path - The path to test
-     * @returns {Promise} A promise for a boolean indicating whether path is the path
-     * to a directory.
+     * Checks to see if the specified directory exists.
+     * @param {string} path - The path to the directory in question
+     * @returns {Promise} A promise that is resolved with the directory's stats if it
+     * exists.  It is fulfilled with false otherwise.
      */
-    Directory.isDirectory = function (path) {
-        var stat = q.nfbind(fs.stat);
+    Directory.exists = function exists(path) {
+        var dfd = q.defer();
 
-        return stat(path)
-            .then(function (stats) {
-                return stats.isDirectory();
-            });
+        fs.stat(path, function (err, stats) {
+            if (err) {
+                dfd.resolve(false);
+                return;
+            }
+
+            if (stats.isDirectory()) {
+                dfd.resolve(stats);
+            } else {
+                dfd.resolve(false);
+            }
+        });
+
+        return dfd.promise;
     };
+
+
+    /**
+     * Checks to see if the specified directory exists.
+     * @param {string} path - The path to the directory in question
+     * @returns {fs.Stats|boolean} If the directory exists, its fs.Stats object is
+     * returned.  If the directory does not exist, false is returned.
+     */
+    Directory.existsSync = function (path) {
+        var stats;
+
+        try {
+            stats = fs.statSync(path);
+        }
+        catch (ex) {
+            return false;
+        }
+
+        return stats.isDirectory() ? stats : false;
+    };
+
 
     return Directory;
 })();

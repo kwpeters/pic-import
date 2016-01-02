@@ -34,7 +34,7 @@ describe("DatestampDir", function () {
                     expect(datestamp.toString()).toEqual("2016-01-01");
                 }
             );
-            
+
 
             it("should retur the datestamp string when there is additional text",
                 function () {
