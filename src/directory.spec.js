@@ -47,16 +47,14 @@ describe(
         describe(
             "instance",
             function () {
-                it(
-                    "can be created",
+                it("can be created",
                     function () {
                         var dir = new Directory("/");
                         expect(dir).toBeDefined();
                     }
                 );
 
-                it(
-                    "split() can split the path into parts",
+                it("split() can split the path into parts",
                     function () {
                         var dir   = new Directory("./foo/bar/baz");
                         var parts = dir.split();
@@ -68,6 +66,11 @@ describe(
                     }
                 );
 
+                it("toString() should return the original path", function () {
+                    var dir = new Directory("./foo/bar/baz/");
+                    expect(dir.toString()).toEqual("./foo/bar/baz/");
+                });
+
                 it(
                     "getSubdirectories() can return subdirectories",
                     function (done) {
@@ -75,7 +78,6 @@ describe(
                         dir.getSubdirectories()
                             .then(
                                 function (subdirs) {
-                                    console.log(subdirs);
                                     expect(subdirs.length).toBe(5);
                                     expect(subdirs[0].slice(-4)).toEqual(".git");
                                     expect(subdirs[1].slice(-5)).toEqual(".idea");

@@ -5,11 +5,18 @@ var fs   = require("fs"),
 var Directory = (function () {
     function Directory(dir) {
 
-        var priv = {};
+        var priv = {dir: dir};
 
-        priv.dir = dir;
+        /**
+         * Returns the path that this Directory object represents.
+         * @method
+         * @returns {string} The directory path
+         */
+        this.toString = function directoryToString() {
+            return priv.dir;
+        };
 
-        // Splits a path using the operating systems directory seperator.
+
         /**
          * Splits this directory's path using the operating system's directory
          * separator.
