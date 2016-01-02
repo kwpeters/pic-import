@@ -1,8 +1,18 @@
 var q         = require("q"),
     ExifImage = require("exif").ExifImage,
+    Datestamp = require("./datestamp"),
     dateRegex = /(\d{4}):(\d{2}):(\d{2})/;
 
+
+/**
+ * Gets the creation date from an image file's EXIF data.
+ * @param {string} imageFile - The file to be examined
+ * @returns {Promise} A promise that will be resolved with a Datestamp if successful.
+ * The promise will be rejected if an error occurred.
+ */
 function getCreateDate(imageFile) {
+    "use strict";
+
     var dfd = q.defer();
 
     try {
@@ -12,13 +22,9 @@ function getCreateDate(imageFile) {
                     dfd.reject(error);
                 } else {
                     var matches   = dateRegex.exec(exifData.exif.CreateDate);
-
                     if (matches) {
-                        var year = matches[1];
-                        var month = matches[2] - 1;  // zero-based
-                        var day = matches[3];
-                        var date = new Date(year, month, day);
-                        dfd.resolve(date);
+                        var datestamp = Datestamp.fromYMD(matches[1], matches[2], matches[3]);
+                        dfd.resolve(datestamp);
                     } else {
                         dfd.reject("Unknown CreateDate string format");
                     }
@@ -37,4 +43,3 @@ function getCreateDate(imageFile) {
 module.exports = {
     getCreateDate: getCreateDate
 };
-

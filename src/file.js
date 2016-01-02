@@ -1,5 +1,6 @@
-var fs = require("fs"),
-    q  = require("q");
+var fs   = require("fs"),
+    path = require("path"),
+    q    = require("q");
 
 var File = (function () {
     "use strict";
@@ -9,17 +10,18 @@ var File = (function () {
      *
      * @class
      * @classdesc Represents a file in the filesystem
-     * @param {string} path - The file's path
+     * @param {...string} filePath - The file's filePath.  If multiple values are given,
+     * path.join() is used to join them.
      */
-    function File(path) {
+    function File(filePath) {
         var priv;
 
-        if (!path) {
+        if (!filePath) {
             throw new Error("File not specified.");
         }
 
         priv = {
-            path: path
+            filePath: path.join.apply(null, arguments)
         };
 
         /**
@@ -28,7 +30,7 @@ var File = (function () {
          * @returns {string} A string representation of this file
          */
         this.toString = function toString() {
-            return priv.path;
+            return priv.filePath;
         };
 
         /**
@@ -38,7 +40,7 @@ var File = (function () {
          * exists.  It is resolved with false otherwise.
          */
         this.exists = function exists() {
-            return File.exists(priv.path);
+            return File.exists(priv.filePath);
         };
 
         /**
@@ -47,21 +49,21 @@ var File = (function () {
          * returned.  If the file does not exist, false is returned.
          */
         this.existsSync = function () {
-            return File.existsSync(priv.path);
+            return File.existsSync(priv.filePath);
         };
 
     }
 
     /**
      * Checks to see if the specified file exists.
-     * @param {string} path - The path to the file in question
+     * @param {string} filePath - The path to the file in question
      * @returns {Promise} A promise that is resolved with the file's stats if it
      * exists.  It is fulfilled with false otherwise.
      */
-    File.exists = function exists(path) {
+    File.exists = function exists(filePath) {
         var dfd = q.defer();
 
-        fs.stat(path, function (err, stats) {
+        fs.stat(filePath, function (err, stats) {
             if (err) {
                 dfd.resolve(false);
                 return;
@@ -79,15 +81,15 @@ var File = (function () {
 
     /**
      * Checks to see if the specified file exists.
-     * @param {string} path - The path to the file in question
+     * @param {string} filePath - The path to the file in question
      * @returns {fs.Stats|boolean} If the file exists, its fs.Stats object is returned.
      * If the file does not exist, false is returned.
      */
-    File.existsSync = function (path) {
+    File.existsSync = function (filePath) {
         var stats;
 
         try {
-            stats = fs.statSync(path);
+            stats = fs.statSync(filePath);
         }
         catch (ex) {
             return false;

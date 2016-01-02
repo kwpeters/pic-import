@@ -85,10 +85,6 @@ var PhotoLibrary = (function () {
 
                 });
 
-            if (!file.exists()) {
-                throw new Error("File does not exist: " + file);
-            }
-
 
             exifReader.getCreateDate(file);
 

@@ -7,6 +7,7 @@ var File = require("./file");
 describe("File", function () {
     "use strict";
 
+
     describe("static", function () {
 
         describe("exists()", function () {
@@ -38,21 +39,34 @@ describe("File", function () {
 
         });
 
-
     });
 
+
     describe("instance", function () {
+
+        describe("constructor", function () {
+
+            it("should join all constructor arguments to form the file's path",
+                function () {
+                    var file = new File("foo", "bar", "baz.txt");
+                    expect(file.toString()).toEqual("foo/bar/baz.txt");
+                }
+            );
+
+        });
+
 
         describe("toString", function () {
 
             it("shouldreturn a string representation",
                 function () {
-                    var file = new File("./foo/bar.txt");
-                    expect(file.toString()).toEqual("./foo/bar.txt");
+                    var file = new File("foo/bar.txt");
+                    expect(file.toString()).toEqual("foo/bar.txt");
                 }
             );
 
         });
+
 
         describe("exists()", function () {
 
@@ -69,6 +83,7 @@ describe("File", function () {
                         );
                 }
             );
+
 
             it("should resolve with false when the file does not exist.",
                 function (done) {

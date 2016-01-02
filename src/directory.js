@@ -9,7 +9,7 @@ var Directory = (function () {
 
         var priv = {dir: dir};
 
-        
+
         /**
          * Returns the path that this Directory object represents.
          * @method
