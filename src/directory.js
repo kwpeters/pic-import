@@ -1,13 +1,29 @@
 var fs   = require("fs"),
     path = require("path"),
-    q    = require("q");
+    q    = require("q"),
+    S    = require("string");
 
 var Directory = (function () {
     "use strict";
 
-    function Directory(dir) {
+    /**
+     * Constructs a new Directory.
+     *
+     * @class
+     * @classdesc Represents a directory in the filesystem
+     *
+     * @param {...string} dirPath - The directory.  Any trailing directory separators
+     * will be removed.
+     */
+    function Directory(dirPath) {
 
-        var priv = {dir: dir};
+        var priv = {dirPath: path.join.apply(null, arguments)};
+        //var priv = {dirPath: dirPath};
+
+        // Remove trailing directory seperator characters.
+        while (S(priv.dirPath).endsWith(path.sep)) {
+            priv.dirPath = priv.dirPath.slice(0, -1);
+        }
 
 
         /**
@@ -16,7 +32,7 @@ var Directory = (function () {
          * @returns {string} The directory path
          */
         this.toString = function directoryToString() {
-            return priv.dir;
+            return priv.dirPath;
         };
 
 
@@ -27,7 +43,7 @@ var Directory = (function () {
          * @returns {string[]} The parts of this directory's path
          */
         this.split = function split() {
-            return priv.dir.split(path.sep);
+            return priv.dirPath.split(path.sep);
         };
 
 
@@ -42,13 +58,13 @@ var Directory = (function () {
             var readdir = q.nfbind(fs.readdir),
                 stat    = q.nfbind(fs.stat);
 
-            return readdir(priv.dir)
+            return readdir(priv.dirPath)
                 .then(
                     function (dirEntries) {
                         // Convert to full paths.
                         return dirEntries.map(
                             function (curDirEntry) {
-                                return path.join(priv.dir, curDirEntry);
+                                return path.join(priv.dirPath, curDirEntry);
                             });
                     }
                 )
@@ -103,7 +119,7 @@ var Directory = (function () {
          * exists.  It is resolved with false otherwise.
          */
         this.exists = function exists() {
-            return Directory.exists(priv.dir);
+            return Directory.exists(priv.dirPath);
         };
 
 
@@ -113,7 +129,7 @@ var Directory = (function () {
          * returned.  If the directory does not exist, false is returned.
          */
         this.existsSync = function () {
-            return Directory.existsSync(priv.dir);
+            return Directory.existsSync(priv.dirPath);
         };
 
     }

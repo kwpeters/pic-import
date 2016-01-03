@@ -10,6 +10,7 @@ describe(
     function () {
         "use strict";
 
+
         describe(
             "static method",
             function () {
@@ -43,36 +44,61 @@ describe(
                             });
                     }
                 );
-            });
+            }
+        );
+
 
         describe(
             "instance",
             function () {
-                it("can be created",
-                    function () {
-                        var dir = new Directory("/");
-                        expect(dir).toBeDefined();
-                    }
-                );
+
+                describe("constructor", function () {
+
+                    it("can create instances",
+                        function () {
+                            var dir = new Directory("/");
+                            expect(dir).toBeDefined();
+                        }
+                    );
+
+
+                    it("will remove trailing directory seperator characters if present",
+                        function () {
+                            var dir = new Directory("foo/bar/");
+                            expect(dir.toString()).toEqual("foo/bar");
+                        }
+                    );
+
+
+                    it("will join all arguments to form the directory path",
+                        function () {
+                            var dir = new Directory("foo", "bar", "baz", "quux");
+                            expect(dir.toString()).toEqual("foo/bar/baz/quux");
+                        }
+                    );
+
+                });
+
 
                 it("split() can split the path into parts",
                     function () {
-                        var dir   = new Directory("./foo/bar/baz");
+                        var dir   = new Directory("foo/bar/baz");
                         var parts = dir.split();
-                        expect(parts.length).toBe(4);
-                        expect(parts[0]).toEqual(".");
-                        expect(parts[1]).toEqual("foo");
-                        expect(parts[2]).toEqual("bar");
-                        expect(parts[3]).toEqual("baz");
+                        expect(parts.length).toBe(3);
+                        expect(parts[0]).toEqual("foo");
+                        expect(parts[1]).toEqual("bar");
+                        expect(parts[2]).toEqual("baz");
                     }
                 );
 
+
                 it("toString() should return the original path",
                     function () {
-                        var dir = new Directory("./foo/bar/baz/");
-                        expect(dir.toString()).toEqual("./foo/bar/baz/");
+                        var dir = new Directory("foo/bar/baz");
+                        expect(dir.toString()).toEqual("foo/bar/baz");
                     }
                 );
+
 
                 it(
                     "getSubdirectories() can return subdirectories",
