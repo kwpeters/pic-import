@@ -108,12 +108,12 @@ describe(
                             .then(
                                 function (subdirs) {
                                     expect(subdirs.length).toBe(6);
-                                    expect(subdirs[0].slice(-4)).toEqual(".git");
-                                    expect(subdirs[1].slice(-5)).toEqual(".idea");
-                                    expect(subdirs[2].slice(-12)).toEqual("node_modules");
-                                    expect(subdirs[3].slice(-3)).toEqual("src");
-                                    expect(subdirs[4].slice(-4)).toEqual("test");
-                                    expect(subdirs[5].slice(-3)).toEqual("tmp");
+                                    expect(subdirs[0].toString().slice(-4)).toEqual(".git");
+                                    expect(subdirs[1].toString().slice(-5)).toEqual(".idea");
+                                    expect(subdirs[2].toString().slice(-12)).toEqual("node_modules");
+                                    expect(subdirs[3].toString().slice(-3)).toEqual("src");
+                                    expect(subdirs[4].toString().slice(-4)).toEqual("test");
+                                    expect(subdirs[5].toString().slice(-3)).toEqual("tmp");
                                     done();
                                 }
                             );

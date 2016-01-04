@@ -18,7 +18,6 @@ var Directory = (function () {
     function Directory(dirPath) {
 
         var priv = {dirPath: path.join.apply(null, arguments)};
-        //var priv = {dirPath: dirPath};
 
         // Remove trailing directory seperator characters.
         while (S(priv.dirPath).endsWith(path.sep)) {
@@ -50,8 +49,9 @@ var Directory = (function () {
         /**
          * Gets a promise for the subdirectories present in this directory.
          * @method
-         * @returns {Promise} A promise for the array of subdirectories
-         * if resolved and an Error if if rejected.
+         * @returns {Promise} A promise for the array of Directory objects
+         * representing the subdirectories of this directory.  If an error occurs, the
+         * promise is rejected.
          */
         this.getSubdirectories = function getSubdirectories() {
             // Convert these Node.js functions to return a promise.
@@ -104,7 +104,7 @@ var Directory = (function () {
                         return dirInfos
                             .map(
                                 function (curDirInfo) {
-                                    return curDirInfo.dirEntry;
+                                    return new Directory(curDirInfo.dirEntry);
                                 }
                             );
                     }
