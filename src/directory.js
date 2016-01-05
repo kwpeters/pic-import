@@ -112,6 +112,28 @@ var Directory = (function () {
         };
 
 
+        this.getSubdirectoriesSync = function getSubdirectoriesSync() {
+            var dirEntries = fs.readdirSync(priv.dirPath);
+            dirEntries = dirEntries.map(function (curDirEntry) {
+                return path.join(priv.dirPath, curDirEntry);
+            });
+            dirEntries = dirEntries.map(function (curDirEntry) {
+                var stats = fs.statSync(curDirEntry);
+                return {
+                    dirEntry: curDirEntry,
+                    stats: stats
+                };
+            });
+            dirEntries = dirEntries.filter(function (curDirEntry) {
+                return curDirEntry.stats.isDirectory();
+            });
+            dirEntries = dirEntries.map(function (curDirEntry) {
+                return new Directory(curDirEntry.dirEntry);
+            });
+            return dirEntries;
+        };
+
+
         /**
          * Checks to see if this directory exists.
          * @method

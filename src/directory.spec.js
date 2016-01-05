@@ -100,8 +100,7 @@ describe(
                 );
 
 
-                it(
-                    "getSubdirectories() can return subdirectories",
+                it("getSubdirectories() can return subdirectories",
                     function (done) {
                         var dir = new Directory(path.join(__dirname, ".."));
                         dir.getSubdirectories()
@@ -117,6 +116,20 @@ describe(
                                     done();
                                 }
                             );
+                    }
+                );
+
+                it("getSubdirectoriesSync() can return subdirectories",
+                    function () {
+                        var dir = new Directory(path.join(__dirname, ".."));
+                        var subdirs = dir.getSubdirectoriesSync();
+                        expect(subdirs.length).toBe(6);
+                        expect(subdirs[0].toString().slice(-4)).toEqual(".git");
+                        expect(subdirs[1].toString().slice(-5)).toEqual(".idea");
+                        expect(subdirs[2].toString().slice(-12)).toEqual("node_modules");
+                        expect(subdirs[3].toString().slice(-3)).toEqual("src");
+                        expect(subdirs[4].toString().slice(-4)).toEqual("test");
+                        expect(subdirs[5].toString().slice(-3)).toEqual("tmp");
                     }
                 );
 
