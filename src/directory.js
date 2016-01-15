@@ -1,4 +1,4 @@
-var fs   = require("fs"),
+var fs   = require("fs-extra"),
     path = require("path"),
     q    = require("q"),
     S    = require("string");
@@ -49,9 +49,9 @@ var Directory = (function () {
         /**
          * Gets a promise for the subdirectories present in this directory.
          * @method
-         * @returns {Promise} A promise for the array of Directory objects
-         * representing the subdirectories of this directory.  If an error occurs, the
-         * promise is rejected.
+         * @returns {Promise} A promise for an array of Directory objects representing
+         * the subdirectories of this directory.  If an error occurs, the promise is
+         * rejected.
          */
         this.getSubdirectories = function getSubdirectories() {
             // Convert these Node.js functions to return a promise.
@@ -112,6 +112,12 @@ var Directory = (function () {
         };
 
 
+        /**
+         * Gets the subdirectories present in this directory.
+         * @method
+         * @returns {Directory[]} An array of Directory objects representing the
+         * subdirectories of this directory.  If an error occurs, the promise is rejected.
+         */
         this.getSubdirectoriesSync = function getSubdirectoriesSync() {
             var dirEntries = fs.readdirSync(priv.dirPath);
             dirEntries = dirEntries.map(function (curDirEntry) {
@@ -141,68 +147,106 @@ var Directory = (function () {
          * exists.  It is resolved with false otherwise.
          */
         this.exists = function exists() {
-            return Directory.exists(priv.dirPath);
+            var dfd = q.defer();
+
+            fs.stat(priv.dirPath, function (err, stats) {
+                if (err) {
+                    dfd.resolve(false);
+                    return;
+                }
+
+                if (stats.isDirectory()) {
+                    dfd.resolve(stats);
+                } else {
+                    dfd.resolve(false);
+                }
+            });
+
+            return dfd.promise;
         };
 
 
         /**
          * Checks to see if the specified directory exists.
+         * @method
          * @returns {fs.Stats|boolean} If the directory exists, its fs.Stats object is
          * returned.  If the directory does not exist, false is returned.
          */
         this.existsSync = function () {
-            return Directory.existsSync(priv.dirPath);
+            var stats;
+
+            try {
+                stats = fs.statSync(priv.dirPath);
+            }
+            catch (ex) {
+                return false;
+            }
+
+            return stats.isDirectory() ? stats : false;
+        };
+
+
+        /**
+         * Ensures that this directory exists.  If it does not, it is created.
+         * @method
+         * @returns {Promise} A promise that is fulfilled once the directory exists.
+         */
+        this.ensureExists = function () {
+            var dfd = q.defer();
+
+            fs.ensureDir(priv.dirPath, function (err) {
+                if (err) {
+                    dfd.reject(err);
+                } else {
+                    dfd.resolve();
+                }
+            });
+
+            return dfd.promise;
+        };
+
+
+        /**
+         * Ensures that this directory exists.  If it does not, it is created.
+         * @method
+         */
+        this.ensureExistsSync = function () {
+            fs.ensureDirSync(priv.dirPath);
+        };
+
+
+        /**
+         * Deletes the contents of this directory.
+         * @method
+         * @returns {Promise} A promise that is fulfilled (with undefined) when this
+         * directory is successfully emptied.  The promise is rejected with if an error
+         * occurs.
+         */
+        this.empty = function () {
+            var dfd = q.defer();
+
+            fs.emptyDir(priv.dirPath, function (err) {
+                if (err) {
+                    dfd.reject(err);
+                    return;
+                }
+
+                dfd.resolve();
+            });
+
+            return dfd.promise;
+        };
+
+
+        /**
+         * Deletes the contents of this directory.
+         * @method
+         */
+        this.emptySync = function () {
+            fs.emptyDirSync(priv.dirPath);
         };
 
     }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // Static functions
-
-    /**
-     * Checks to see if the specified directory exists.
-     * @param {string} path - The path to the directory in question
-     * @returns {Promise} A promise that is resolved with the directory's stats if it
-     * exists.  It is fulfilled with false otherwise.
-     */
-    Directory.exists = function exists(path) {
-        var dfd = q.defer();
-
-        fs.stat(path, function (err, stats) {
-            if (err) {
-                dfd.resolve(false);
-                return;
-            }
-
-            if (stats.isDirectory()) {
-                dfd.resolve(stats);
-            } else {
-                dfd.resolve(false);
-            }
-        });
-
-        return dfd.promise;
-    };
-
-
-    /**
-     * Checks to see if the specified directory exists.
-     * @param {string} path - The path to the directory in question
-     * @returns {fs.Stats|boolean} If the directory exists, its fs.Stats object is
-     * returned.  If the directory does not exist, false is returned.
-     */
-    Directory.existsSync = function (path) {
-        var stats;
-
-        try {
-            stats = fs.statSync(path);
-        }
-        catch (ex) {
-            return false;
-        }
-
-        return stats.isDirectory() ? stats : false;
-    };
 
 
     return Directory;

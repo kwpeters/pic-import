@@ -1,5 +1,4 @@
-var Directory    = require("./directory"),
-    exifReader   = require("./exifReader"),
+var exifReader   = require("./exifReader"),
     DatestampDir = require("./datestampDir"),
     File         = require("./file");
 
@@ -9,16 +8,15 @@ var Directory    = require("./directory"),
  * Creates a map in which datestamps are the keys and the values are the subdirectories
  * within libraryDir corresponding to those dates.
  *
- * @param {string} libraryDir - The library directory to be analyzed
+ * @param {Directory} libraryDir - The library directory to be analyzed
  * @returns {Promise} A promise for the generated map
  */
 function createDateDirMap(libraryDir) {
     "use strict";
 
-    var libDir = new Directory(libraryDir),
-        subdirs;
+    var subdirs;
 
-    subdirs = libDir.getSubdirectories()
+    subdirs = libraryDir.getSubdirectories()
         .done(function (subdirs) {
             // We are only concerned with the subdirectories that have a date in them.
             return subdirs.reduce(
@@ -47,12 +45,12 @@ var PhotoLibrary = (function () {
      * @class
      * @classdesc Represents a photo library
      *
-     * @param {string} rootDir - The root directory of the photo library.  If the
+     * @param {Directory} rootDir - The root directory of the photo library.  If the
      * specified directory does not exist, an exception will be thrown.
      */
     function PhotoLibrary(rootDir) {
 
-        if (!Directory.existsSync(rootDir)) {
+        if (!rootDir.existsSync()) {
             throw new Error("Directory does not exist:" + rootDir);
         }
 
@@ -86,7 +84,7 @@ var PhotoLibrary = (function () {
                 });
 
 
-            exifReader.getCreateDate(file);
+            //exifReader.getCreateDate(file);
 
 
 
