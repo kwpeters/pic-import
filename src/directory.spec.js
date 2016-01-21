@@ -286,9 +286,20 @@ describe(
 
                 describe("empty()", function () {
 
-                    it("",
-                        function () {
-                            expect(false).toBeTruthy();
+                    it("should delete existing items in the specified directory",
+                        function (done) {
+                            var tmpDir = new Directory("tmp"),
+                                dirA   = new Directory("tmp/dirA");
+                            dirA.ensureExistsSync();
+
+                            tmpDir.empty()
+                                .then(
+                                    function () {
+                                        expect(dirA.existsSync()).toBeFalsy();
+                                        expect(tmpDir.existsSync()).toBeTruthy();
+                                        done();
+                                    }
+                                );
                         }
                     );
 
@@ -297,9 +308,16 @@ describe(
 
                 describe("emptySync()", function () {
 
-                    it("",
+                    it("should delete existing items in the specified directory",
                         function () {
-                            expect(false).toBeTruthy();
+                            var tmpDir = new Directory("tmp"),
+                                dirA = new Directory("tmp/dirA");
+
+                            dirA.ensureExistsSync();
+
+                            tmpDir.emptySync();
+                            expect(dirA.existsSync()).toBeFalsy();
+                            expect(tmpDir.existsSync()).toBeTruthy();
                         }
                     );
 
