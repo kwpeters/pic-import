@@ -8,40 +8,6 @@ describe("File", function () {
     "use strict";
 
 
-    describe("static", function () {
-
-        describe("exists()", function () {
-
-            it("should resolve with the file's stats when the file exists",
-                function (done) {
-                    File.exists(__filename)
-                        .done(
-                            function (stats) {
-                                expect(stats).toBeDefined();
-                                done();
-                            }
-                        );
-                }
-            );
-
-
-            it("should resolve with false when the file does not exist.",
-                function (done) {
-                    File.exists("./foo/bar.txt")
-                        .done(
-                            function (stats) {
-                                expect(stats).toBe(false);
-                                done();
-                            }
-                        );
-                }
-            );
-
-        });
-
-    });
-
-
     describe("instance", function () {
 
         describe("constructor", function () {

@@ -60,7 +60,7 @@ describe("PhotoLibrary", function () {
                 }
             );
 
-            
+
             it("will not move a file into the library when it already exists",
                 function () {
                     expect(false).toBeTruthy();

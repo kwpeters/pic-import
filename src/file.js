@@ -24,6 +24,7 @@ var File = (function () {
             filePath: path.join.apply(null, arguments)
         };
 
+        
         /**
          * Returns a string representation of this file.
          * @method
@@ -33,6 +34,7 @@ var File = (function () {
             return priv.filePath;
         };
 
+
         /**
          * Checks to see if this file exists.
          * @method
@@ -40,8 +42,24 @@ var File = (function () {
          * exists.  It is resolved with false otherwise.
          */
         this.exists = function exists() {
-            return File.exists(priv.filePath);
+            var dfd = q.defer();
+
+            fs.stat(priv.filePath, function (err, stats) {
+                if (err) {
+                    dfd.resolve(false);
+                    return;
+                }
+
+                if (stats.isFile()) {
+                    dfd.resolve(stats);
+                } else {
+                    dfd.resolve(false);
+                }
+            });
+
+            return dfd.promise;
         };
+
 
         /**
          * Checks to see if the specified file exists.
@@ -49,54 +67,20 @@ var File = (function () {
          * returned.  If the file does not exist, false is returned.
          */
         this.existsSync = function () {
-            return File.existsSync(priv.filePath);
+            var stats;
+
+            try {
+                stats = fs.statSync(filePath);
+            }
+            catch (ex) {
+                return false;
+            }
+
+            return stats.isFile() ? stats : false;
         };
 
     }
 
-    /**
-     * Checks to see if the specified file exists.
-     * @param {string} filePath - The path to the file in question
-     * @returns {Promise} A promise that is resolved with the file's stats if it
-     * exists.  It is fulfilled with false otherwise.
-     */
-    File.exists = function exists(filePath) {
-        var dfd = q.defer();
-
-        fs.stat(filePath, function (err, stats) {
-            if (err) {
-                dfd.resolve(false);
-                return;
-            }
-
-            if (stats.isFile()) {
-                dfd.resolve(stats);
-            } else {
-                dfd.resolve(false);
-            }
-        });
-
-        return dfd.promise;
-    };
-
-    /**
-     * Checks to see if the specified file exists.
-     * @param {string} filePath - The path to the file in question
-     * @returns {fs.Stats|boolean} If the file exists, its fs.Stats object is returned.
-     * If the file does not exist, false is returned.
-     */
-    File.existsSync = function (filePath) {
-        var stats;
-
-        try {
-            stats = fs.statSync(filePath);
-        }
-        catch (ex) {
-            return false;
-        }
-
-        return stats.isFile() ? stats : false;
-    };
 
     return File;
 })();
