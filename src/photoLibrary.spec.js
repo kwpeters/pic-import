@@ -33,7 +33,35 @@ describe("PhotoLibrary", function () {
             });
 
 
-            it("import() will copy files appropriately into the photo library directory structure",
+            it("will *move* a picture into the photo library",
+                function () {
+                    expect(false).toBeTruthy();
+                }
+            );
+
+
+            it("will create a new directory and move a picture into it",
+                function () {
+                    expect(false).toBeTruthy();
+                }
+            );
+
+
+            it("will move a picture into a directory that already exists",
+                function () {
+                    expect(false).toBeTruthy();
+                }
+            );
+
+
+            it("will move a picture into a directory that already exists and has additional text",
+                function () {
+                    expect(false).toBeTruthy();
+                }
+            );
+
+            
+            it("will not move a file into the library when it already exists",
                 function () {
                     expect(false).toBeTruthy();
                 }
@@ -41,7 +69,6 @@ describe("PhotoLibrary", function () {
 
 
         });
-
 
 
     });
