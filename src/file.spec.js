@@ -1,6 +1,8 @@
 /* global describe */
 /* global it */
 /* global expect */
+/* global beforeEach */
+
 var File      = require("./file"),
     Directory = require("./directory");
 
@@ -70,11 +72,17 @@ describe("File", function () {
 
         describe("copy()", function () {
 
+            var destDir = new Directory("tmp");
+
+            beforeEach(function () {
+                destDir.emptySync();
+            });
+
+
             it("should copy the file to the specified destination directory",
                 function (done) {
 
-                    var srcFile = new File("test/input/2015-03-11 09.05.32.jpg"),
-                        destDir = new Directory("tmp");
+                    var srcFile = new File("test/input/2015-03-11 09.05.32.jpg");
 
                     srcFile.copy(destDir)
                         .then(
@@ -90,8 +98,7 @@ describe("File", function () {
 
             it("should rename the file when a directory and filename is specified",
                 function (done) {
-                    var srcFile = new File("test/input/2015-03-11 09.05.32.jpg"),
-                        destDir = new Directory("tmp");
+                    var srcFile = new File("test/input/2015-03-11 09.05.32.jpg");
 
                     srcFile.copy(destDir, "foo.jpg")
                         .then(
@@ -107,8 +114,8 @@ describe("File", function () {
 
             it("should rename the file when a destination File is specified",
                 function (done) {
-                    var srcFile = new File("test/input/2015-03-11 09.05.32.jpg"),
-                        destFile = new File("tmp", "foo2.jpg");
+                    var srcFile  = new File("test/input/2015-03-11 09.05.32.jpg"),
+                        destFile = new File("tmp/foo2.jpg");
 
                     srcFile.copy(destFile)
                         .then(
@@ -124,8 +131,7 @@ describe("File", function () {
 
             it("should reject if the source file does not exist",
                 function (done) {
-                    var srcFile = new File("test/input/does_not_exist.jpg"),
-                        destDir = new Directory("tmp");
+                    var srcFile = new File("test/input/does_not_exist.jpg");
 
                     srcFile.copy(destDir)
                         .catch(
@@ -138,6 +144,7 @@ describe("File", function () {
 
                 }
             );
+
 
             it("should overwrite the destination file if it already exists",
                 function () {
