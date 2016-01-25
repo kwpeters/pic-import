@@ -1,6 +1,7 @@
-var fs   = require("fs"),
+var fs   = require("fs-extra"),
     path = require("path"),
-    q    = require("q");
+    q    = require("q"),
+    Directory = require("./directory");
 
 var File = (function () {
     "use strict";
@@ -24,7 +25,7 @@ var File = (function () {
             filePath: path.join.apply(null, arguments)
         };
 
-        
+
         /**
          * Returns a string representation of this file.
          * @method
@@ -32,6 +33,37 @@ var File = (function () {
          */
         this.toString = function toString() {
             return priv.filePath;
+        };
+
+
+        /**
+         * Splits this file's path into 3 parts: directory (including trailing path
+         * seperator), basename, and extension (including initial ".").
+         * @method
+         * @returns {string[]} The 3 parts of the path.  The item at index 0 is the
+         * directory (with a trailing directory seperator), index 1 is the basename and
+         * index 2 is the extension (including the initial ".").  If the file is a
+         * dotfile, the basename index will include the file's name.
+         */
+        this.split = function () {
+
+            var dirName = path.dirname(priv.filePath) + path.sep,
+                extName = path.extname(priv.filePath),
+                baseName = path.basename(priv.filePath, extName);
+
+            return [dirName, baseName, extName];
+        };
+
+
+        /**
+         * Gets a Directory object representing the directory portion of this file's path.
+         * @method
+         * @returns {Directory} A directory object representing the directory portion of
+         * this file's path.
+         */
+        this.directory = function () {
+            var dirName = path.dirname(priv.filePath);
+            return new Directory(dirName);
         };
 
 
@@ -70,13 +102,57 @@ var File = (function () {
             var stats;
 
             try {
-                stats = fs.statSync(filePath);
+                stats = fs.statSync(priv.filePath);
             }
             catch (ex) {
                 return false;
             }
 
             return stats.isFile() ? stats : false;
+        };
+
+
+        /**
+         * Copies this file to the specified destination.
+         * @method
+         * @param {Directory|File} destDirOrFile - The destination directory or file name
+         * @param {string} [destFilename] - If destDirOrFile was a Directory, this optional
+         * parameter can specify the name of the destination file.  If not specified, the
+         * file name of this file is used.
+         * @returns {Promise} A promise that is resolved with the destination File object
+         * if successful.  This promise is rejected if an error occurred.
+         */
+        this.copy = function(destDirOrFile, destFilename) {
+            var dfd = q.defer(),
+                srcFileParts = this.split(),
+                destFile;
+
+            if (destDirOrFile instanceof File) {
+                // The caller has specified the destination directory and file name in the
+                // form of a File.
+
+                destFile = destDirOrFile;
+            } else if (destDirOrFile instanceof Directory) {
+                // The caller has specified the destination directory and optionally a
+                // new file name.
+
+                if (destFilename === undefined) {
+                    destFile = new File(destDirOrFile.toString(), srcFileParts[1] + srcFileParts[2]);
+                } else {
+                    destFile = new File(destDirOrFile.toString(), destFilename);
+                }
+            }
+
+            fs.copy(priv.filePath, destFile.toString(), function (err) {
+                if (err) {
+                    dfd.reject(err);
+                    return;
+                }
+
+                dfd.resolve(destFile);
+            });
+
+            return dfd.promise;
         };
 
     }

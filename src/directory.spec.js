@@ -11,44 +11,6 @@ describe(
     function () {
         "use strict";
 
-
-        //describe(
-        //    "static method",
-        //    function () {
-        //
-        //        describe(
-        //            "exists()",
-        //            function () {
-        //                it(
-        //                    "should fulfill with a truthy stats object when given a directory",
-        //                    function (done) {
-        //                        Directory.exists(__dirname)
-        //                            .then(
-        //                                function (stats) {
-        //                                    expect(stats).toBeTruthy();
-        //                                    done();
-        //                                }
-        //                            );
-        //                    }
-        //                );
-        //
-        //                it(
-        //                    "should fulfill with false when given a file",
-        //                    function (done) {
-        //                        Directory.exists(__filename)
-        //                            .then(
-        //                                function (stats) {
-        //                                    expect(stats).toBe(false);
-        //                                    done();
-        //                                }
-        //                            );
-        //                    });
-        //            }
-        //        );
-        //    }
-        //);
-
-
         describe(
             "instance",
             function () {
@@ -89,6 +51,31 @@ describe(
                             expect(dir.toString()).toEqual("foo/bar/baz");
                         }
                     );
+
+                });
+
+
+                describe("equals()", function () {
+
+                    it("should return true for two equal directories",
+                        function () {
+                            var dir1 = new Directory("foo/bar/"),
+                                dir2 = new Directory("foo/bar");
+
+                            expect(dir1.equals(dir2)).toBe(true);
+                        }
+                    );
+
+
+                    it("should return false for two directories that are not equal",
+                        function () {
+                            var dir1 = new Directory("foo/bar/"),
+                                dir2 = new Directory("foo/baz");
+
+                            expect(dir1.equals(dir2)).toBe(false);
+                        }
+                    );
+
 
                 });
 

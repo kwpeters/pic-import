@@ -34,6 +34,19 @@ var Directory = (function () {
             return priv.dirPath;
         };
 
+        /**
+         * Determines whether this Directory is equal to the specified directory.
+         * @method
+         * @param {Directory} other - The Directory to comppare against
+         * @returns {boolean} true if the directories represent the same directory path.
+         * false otherwise.
+         */
+        this.equals = function (other) {
+            // We will just base equality on whether or not the represented
+            // paths are equal.
+            return this.toString() === other.toString();
+        };
+
 
         /**
          * Splits this directory's path using the operating system's directory
