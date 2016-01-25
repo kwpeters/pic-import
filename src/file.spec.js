@@ -217,7 +217,7 @@ describe("File", function () {
                     var dir  = new Directory("../foo/bar"),
                         file = new File(dir.toString(), "baz.txt");
 
-                    expect(file.directory()).toEqual(dir);
+                    expect(file.directory().toString()).toEqual(dir.toString());
                 }
             );
 
