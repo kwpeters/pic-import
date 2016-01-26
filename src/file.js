@@ -155,6 +155,30 @@ var File = (function () {
             return dfd.promise;
         };
 
+
+        this.copySync = function (destDirOrFile, destFilename) {
+            var srcFileParts = this.split(),
+                destFile;
+
+            if (destDirOrFile instanceof File) {
+                // The caller has specified the destination directory and file name in the
+                // form of a File.
+                destFile = destDirOrFile;
+            } else if (destDirOrFile instanceof Directory) {
+                // The caller has specified the destination directory and optionally a new
+                // file name.
+
+                if (destFilename === undefined) {
+                    destFile = new File(destDirOrFile.toString(), srcFileParts[1] + srcFileParts[2]);
+                } else {
+                    destFile = new File(destDirOrFile.toString(), destFilename);
+                }
+            }
+
+            fs.copySync(priv.filePath, destFile.toString());
+            return destFile;
+        };
+
     }
 
 

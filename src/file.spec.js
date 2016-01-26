@@ -148,12 +148,91 @@ describe("File", function () {
 
             it("should overwrite the destination file if it already exists",
                 function () {
+
+                    // Create a small text file
+                    // Get its size
+                    // Get the size of the file to be copied on top of it.
+                    // Copy an image over it
+                    // Get the new size
+                    // Make sure the new size is the one of the copied file
+
                     expect(false).toBeTruthy();
                 }
             );
 
 
         });
+
+
+        describe("copySync()", function () {
+
+            var destDir = new Directory("tmp");
+
+            beforeEach(function () {
+                destDir.emptySync();
+            });
+
+
+            it("should copy the file to the specified destination directory",
+                function () {
+
+                    var srcFile = new File("test/input/2015-03-11 09.05.32.jpg");
+                    var destFile = srcFile.copySync(destDir);
+                    expect(destFile.toString()).toEqual("tmp/2015-03-11 09.05.32.jpg");
+                    expect(destFile.existsSync()).toBeTruthy();
+                }
+            );
+
+
+            it("should rename the file when a directory and filename is specified",
+                function () {
+                    var srcFile = new File("test/input/2015-03-11 09.05.32.jpg"),
+                        destFile = srcFile.copySync(destDir, "foo.jpg");
+                    expect(destFile.toString()).toEqual("tmp/foo.jpg");
+                    expect(destFile.existsSync()).toBeTruthy();
+                }
+            );
+
+
+            it("should rename the file when a destination File is specified",
+                function () {
+                    var srcFile  = new File("test/input/2015-03-11 09.05.32.jpg"),
+                        destFile = new File("tmp/foo2.jpg");
+
+                    destFile = srcFile.copySync(destFile);
+                    expect(destFile.toString()).toEqual("tmp/foo2.jpg");
+                    expect(destFile.existsSync()).toBeTruthy();
+                }
+            );
+
+
+            it("should reject if the source file does not exist",
+                function () {
+                    var srcFile = new File("test/input/does_not_exist.jpg");
+
+                    expect(function () {srcFile.copySync(destDir);}).toThrow();
+                    expect(new File(destDir.toString(), "does_not_exist.jpg").existsSync()).toBeFalsy();
+                }
+            );
+
+
+            it("should overwrite the destination file if it already exists",
+                function () {
+
+                    // Create a small text file
+                    // Get its size
+                    // Get the size of the file to be copied on top of it.
+                    // Copy an image over it
+                    // Get the new size
+                    // Make sure the new size is the one of the copied file
+
+                    expect(false).toBeTruthy();
+                }
+            );
+
+
+        });
+
 
 
         describe("split()", function () {
@@ -225,6 +304,24 @@ describe("File", function () {
                         file = new File(dir.toString(), "baz.txt");
 
                     expect(file.directory().toString()).toEqual(dir.toString());
+                }
+            );
+
+        });
+        
+        
+        describe("writeFile", function () {
+
+
+            it("creates any necessary directories",
+                function () {
+                    // todo
+                }
+            );
+
+            it("writes the specified text to the file",
+                function () {
+
                 }
             );
 
