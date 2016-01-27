@@ -1,7 +1,8 @@
 var fs   = require("fs-extra"),
     path = require("path"),
     q    = require("q"),
-    Directory = require("./directory");
+    Directory = require("./directory"),
+    pathHelpers = require("./pathHelpers");
 
 var File = (function () {
     "use strict";
@@ -22,7 +23,7 @@ var File = (function () {
         }
 
         priv = {
-            filePath: path.join.apply(null, arguments)
+            filePath: pathHelpers.reducePathParts(Array.prototype.slice.call(arguments))
         };
 
 
@@ -116,7 +117,7 @@ var File = (function () {
          * Copies this file to the specified destination.
          * @method
          * @param {Directory|File} destDirOrFile - The destination directory or file name
-         * @param {string} [destFilename] - If destDirOrFile was a Directory, this optional
+         * @param {string} [destFilename] - If destDirOrFile is a Directory, this optional
          * parameter can specify the name of the destination file.  If not specified, the
          * file name of this file is used.
          * @returns {Promise} A promise that is resolved with the destination File object
@@ -156,6 +157,15 @@ var File = (function () {
         };
 
 
+        /**
+         * Copies this file to the specified destination.
+         * @method
+         * @param {Directory|File} destDirOrFile - The destination directory or file name
+         * @param {string} [destFilename] - If destDirOrFile is a Directory, this optional
+         * parameter can specify the name of the destination file.  If not specified, the
+         * file name of this file is used.
+         * @returns {File} A File object representing the destination file
+         */
         this.copySync = function (destDirOrFile, destFilename) {
             var srcFileParts = this.split(),
                 destFile;

@@ -22,6 +22,29 @@ describe("File", function () {
                 }
             );
 
+
+            it("should convert Directory objects to strings when joining arguments",
+                function () {
+                    var file = new File(
+                        new Directory("foo"),
+                        "baz.txt");
+
+                    expect(file.toString()).toEqual("foo/baz.txt");
+                }
+            );
+
+
+            it("when a Directory is present everything that precedes it should be discarded",
+                function () {
+                    var file = new File(
+                        new Directory("foo"),
+                        new Directory("bar"),
+                        "baz.txt");
+
+                    expect(file.toString()).toEqual("bar/baz.txt");
+                }
+            );
+
         });
 
 
@@ -156,6 +179,7 @@ describe("File", function () {
                     // Get the new size
                     // Make sure the new size is the one of the copied file
 
+                    // todo
                     expect(false).toBeTruthy();
                 }
             );
@@ -226,6 +250,7 @@ describe("File", function () {
                     // Get the new size
                     // Make sure the new size is the one of the copied file
 
+                    // todo
                     expect(false).toBeTruthy();
                 }
             );
@@ -310,12 +335,12 @@ describe("File", function () {
         });
         
         
-        describe("writeFile", function () {
+        describe("writeFile()", function () {
 
 
             it("creates any necessary directories",
                 function () {
-                    // todo
+                    var dir = new Directory("tmp");
                 }
             );
 
@@ -325,6 +350,10 @@ describe("File", function () {
                 }
             );
 
+        });
+
+        describe("writeFileSync()", function () {
+            // todo
         });
 
     });
