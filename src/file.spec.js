@@ -3,7 +3,8 @@
 /* global expect */
 /* global beforeEach */
 
-var File      = require("./file"),
+var path      = require("path"),
+    File      = require("./file"),
     Directory = require("./directory");
 
 
@@ -244,6 +245,8 @@ describe("File", function () {
                 function () {
 
                     // Create a small text file
+
+
                     // Get its size
                     // Get the size of the file to be copied on top of it.
                     // Copy an image over it
@@ -257,7 +260,6 @@ describe("File", function () {
 
 
         });
-
 
 
         describe("split()", function () {
@@ -335,24 +337,43 @@ describe("File", function () {
         });
         
         
-        describe("writeFile()", function () {
+        describe("write()", function () {
 
 
             it("creates any necessary directories",
-                function () {
-                    var dir = new Directory("tmp");
+                function (done) {
+                    var dir = new Directory(path.join("tmp", "foo", "bar")),
+                        outFile = new File(dir, 'test.txt');
+
+                    outFile.write("hello world")
+                        .then(function () {
+                            expect(outFile.existsSync()).toBeTruthy();
+                            done();
+                        });
+
                 }
             );
 
-            it("writes the specified text to the file",
-                function () {
 
+            it("writes the specified text to the file",
+                function (done) {
+                    var dir = new Directory("tmp"),
+                        outFile = new File(dir, "test.txt");
+
+                    outFile.write("12345")
+                        .then(function () {
+                            return outFile.read();
+                        })
+                        .then(function (text) {
+                            expect(text).toEqual("12345");
+                            done();
+                        });
                 }
             );
 
         });
 
-        describe("writeFileSync()", function () {
+        describe("writeSync()", function () {
             // todo
         });
 

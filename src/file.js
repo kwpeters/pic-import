@@ -189,6 +189,43 @@ var File = (function () {
             return destFile;
         };
 
+
+        this.write = function (text) {
+            var dfd = q.defer();
+
+            fs.outputFile(priv.filePath, text, function (err) {
+                if (err) {
+                    dfd.reject(err);
+                    return;
+                }
+
+                dfd.resolve();
+            });
+
+            return dfd.promise;
+        };
+
+
+        // todo:  Add writeSync()
+
+
+        this.read = function () {
+            var dfd = q.defer();
+
+            fs.readFile(priv.filePath, {encoding: "utf8"}, function (err, data) {
+                if (err) {
+                    dfd.reject(err);
+                    return;
+                }
+
+                dfd.resolve(data);
+            });
+
+            return dfd.promise;
+        };
+
+
+        // todo: Add readSync()
     }
 
 
