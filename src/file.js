@@ -12,8 +12,8 @@ var File = (function () {
      *
      * @class
      * @classdesc Represents a file in the filesystem
-     * @param {...string} filePath - The file's filePath.  If multiple values are given,
-     * path.join() is used to join them.
+     * @param {...string} filePath - The file's filePath.  Multiple values may be given,
+     * because pathHelpers.reducePathParts() is used to build the file's path.
      */
     function File(filePath) {
         var priv;
@@ -28,9 +28,9 @@ var File = (function () {
 
 
         /**
-         * Returns a string representation of this file.
+         * Returns a string representation of this file's path.
          * @method
-         * @returns {string} A string representation of this file
+         * @returns {string} A string representation of this file's path.
          */
         this.toString = function toString() {
             return priv.filePath;
@@ -92,6 +92,7 @@ var File = (function () {
 
             return dfd.promise;
         };
+        this.stats = this.exists;
 
 
         /**
@@ -111,6 +112,7 @@ var File = (function () {
 
             return stats.isFile() ? stats : false;
         };
+        this.statsSync = this.existsSync;
 
 
         /**

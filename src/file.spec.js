@@ -171,17 +171,34 @@ describe("File", function () {
 
 
             it("should overwrite the destination file if it already exists",
-                function () {
+                function (done) {
 
-                    // Create a small text file
-                    // Get its size
-                    // Get the size of the file to be copied on top of it.
-                    // Copy an image over it
-                    // Get the new size
-                    // Make sure the new size is the one of the copied file
+                    var origFile,
+                        origSize,
+                        newFile,
+                        newSize;
 
-                    // todo
-                    expect(false).toBeTruthy();
+                    // Create a small text file and get its size.
+                    origFile = new File(destDir, "test.txt");
+                    origFile.writeSync("abc");
+                    origSize = origFile.statsSync().size;
+
+
+                    // Create another file and get its size.
+                    newFile = new File(destDir, "source.txt");
+                    newFile.writeSync("abcdefghijklmnopqrstuvwxyz");
+                    newSize = newFile.statsSync().size;
+
+
+                    // Copy newFile over origFile.  Get the size of the copied file.
+                    // It should equal the size of newFile.
+                    newFile.copy(origFile)
+                        .then(
+                            function (destFile) {
+                                expect(destFile.statsSync().size).toEqual(newSize);
+                                done();
+                            }
+                        );
                 }
             );
 
@@ -244,17 +261,28 @@ describe("File", function () {
             it("should overwrite the destination file if it already exists",
                 function () {
 
-                    // Create a small text file
+                    var origFile,
+                        origSize,
+                        newFile,
+                        newSize,
+                        destFile;
+
+                    // Create a small text file and get its size.
+                    origFile = new File(destDir, "test.txt");
+                    origFile.writeSync("abc");
+                    origSize = origFile.statsSync().size;
 
 
-                    // Get its size
-                    // Get the size of the file to be copied on top of it.
-                    // Copy an image over it
-                    // Get the new size
-                    // Make sure the new size is the one of the copied file
+                    // Create another file and get its size.
+                    newFile = new File(destDir, "source.txt");
+                    newFile.writeSync("abcdefghijklmnopqrstuvwxyz");
+                    newSize = newFile.statsSync().size;
 
-                    // todo
-                    expect(false).toBeTruthy();
+
+                    // Copy newFile over origFile.  Get the size of the copied file.
+                    // It should equal the size of newFile.
+                    destFile = newFile.copySync(origFile);
+                    expect(destFile.statsSync().size).toEqual(newSize);
                 }
             );
 
