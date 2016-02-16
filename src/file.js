@@ -190,6 +190,12 @@ var File = (function () {
         };
 
 
+        /**
+         * Writes the specified text to this file.
+         * @param {string} text - The text to be written to this file
+         * @returns {Promise} A promise that is fulfilled (with undefined) when the
+         * write operation finishes.  It is rejected with an Error when an error occurs.
+         */
         this.write = function (text) {
             var dfd = q.defer();
 
@@ -206,7 +212,14 @@ var File = (function () {
         };
 
 
-        // todo:  Add writeSync()
+        /**
+         * Writes the specified text to this file.
+         * @param {string} text - The text to be written to this file
+         * @returns {undefined} Always returns undefined
+         */
+        this.writeSync = function (text) {
+            fs.outputFileSync(priv.filePath, text);
+        };
 
 
         this.read = function () {

@@ -375,6 +375,27 @@ describe("File", function () {
 
         describe("writeSync()", function () {
             // todo
+            it("creates any necessary directories",
+                function () {
+                    var dir = new Directory(path.join("tmp", "foo", "bar")),
+                        outFile = new File(dir, 'test.txt');
+
+                    outFile.writeSync("hello world");
+                    expect(outFile.existsSync()).toBeTruthy();
+                }
+            );
+
+
+            it("writes the specified text to the file",
+                function () {
+                    var dir = new Directory("tmp"),
+                        outFile = new File(dir, "test.txt");
+
+                    outFile.writeSync("12345");
+                    var actualText = outFile.readSync();
+                    expect(actualText).toEqual("12345");
+                }
+            );
         });
 
     });
