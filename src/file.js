@@ -46,7 +46,7 @@ var File = (function () {
          * index 2 is the extension (including the initial ".").  If the file is a
          * dotfile, the basename index will include the file's name.
          */
-        this.split = function () {
+        this.split = function split() {
 
             var dirName = path.dirname(priv.filePath) + path.sep,
                 extName = path.extname(priv.filePath),
@@ -62,7 +62,7 @@ var File = (function () {
          * @returns {Directory} A directory object representing the directory portion of
          * this file's path.
          */
-        this.directory = function () {
+        this.directory = function directory() {
             var dirName = path.dirname(priv.filePath);
             return new Directory(dirName);
         };
@@ -99,7 +99,7 @@ var File = (function () {
          * @returns {fs.Stats|boolean} If the file exists, its fs.Stats object is
          * returned.  If the file does not exist, false is returned.
          */
-        this.existsSync = function () {
+        this.existsSync = function existsSync() {
             var stats;
 
             try {
@@ -123,7 +123,7 @@ var File = (function () {
          * @returns {Promise} A promise that is resolved with the destination File object
          * if successful.  This promise is rejected if an error occurred.
          */
-        this.copy = function(destDirOrFile, destFilename) {
+        this.copy = function copy(destDirOrFile, destFilename) {
             var dfd = q.defer(),
                 srcFileParts = this.split(),
                 destFile;
@@ -166,7 +166,7 @@ var File = (function () {
          * file name of this file is used.
          * @returns {File} A File object representing the destination file
          */
-        this.copySync = function (destDirOrFile, destFilename) {
+        this.copySync = function copySync(destDirOrFile, destFilename) {
             var srcFileParts = this.split(),
                 destFile;
 
@@ -192,11 +192,12 @@ var File = (function () {
 
         /**
          * Writes the specified text to this file.
+         * @method
          * @param {string} text - The text to be written to this file
          * @returns {Promise} A promise that is fulfilled (with undefined) when the
          * write operation finishes.  It is rejected with an Error when an error occurs.
          */
-        this.write = function (text) {
+        this.write = function write(text) {
             var dfd = q.defer();
 
             fs.outputFile(priv.filePath, text, function (err) {
@@ -214,6 +215,7 @@ var File = (function () {
 
         /**
          * Writes the specified text to this file.
+         * @method
          * @param {string} text - The text to be written to this file
          * @returns {undefined} Always returns undefined
          */
@@ -222,23 +224,37 @@ var File = (function () {
         };
 
 
-        this.read = function () {
+        /**
+         * Reads the text from this file.
+         * @method
+         * @returns {Promise} A promise that is fulfilled with the text contents of this
+         * file.  The promise is rejected with an error if an error is encountered.
+         */
+        this.read = function read() {
             var dfd = q.defer();
 
-            fs.readFile(priv.filePath, {encoding: "utf8"}, function (err, data) {
+            fs.readFile(priv.filePath, {encoding: "utf8"}, function (err, text) {
                 if (err) {
                     dfd.reject(err);
                     return;
                 }
 
-                dfd.resolve(data);
+                dfd.resolve(text);
             });
 
             return dfd.promise;
         };
 
 
-        // todo: Add readSync()
+        /**
+         * Reads the text from this file.
+         * @method
+         * @returns {string} The text contents of this file.
+         */
+        this.readSync = function readSync() {
+            return fs.readFileSync(priv.filePath, {encoding: "utf8"});
+        };
+
     }
 
 
