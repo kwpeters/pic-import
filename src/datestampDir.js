@@ -15,12 +15,10 @@ var DatestampDir = (function () {
     function DatestampDir() {
 
         // Data members
-        // todo: Define data members.
         // this.name = 'Kevin';
     }
 
     // Member functions
-    // todo: Define methods.
     // DatestampDir.prototype.myMethod = function () { };
 
 

@@ -402,7 +402,8 @@ describe("File", function () {
         });
 
         describe("writeSync()", function () {
-            // todo
+
+
             it("creates any necessary directories",
                 function () {
                     var dir = new Directory(path.join("tmp", "foo", "bar")),
