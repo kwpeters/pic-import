@@ -40,6 +40,16 @@ describe(
                         }
                     );
 
+
+                    it("should accept an initial Directory argument",
+                        function () {
+                            var dirA = new Directory("foo"),
+                                dirB = new Directory(dirA, "bar");
+                            expect(dirB.toString()).toEqual("foo/bar");
+
+                        }
+                    );
+
                 });
 
 

@@ -1,7 +1,7 @@
-var fs   = require("fs-extra"),
-    path = require("path"),
-    q    = require("q"),
-    S    = require("string");
+var fs          = require("fs-extra"),
+    path        = require("path"),
+    q           = require("q"),
+    S           = require("string");
 
 var Directory = (function () {
     "use strict";
@@ -12,12 +12,16 @@ var Directory = (function () {
      * @class
      * @classdesc Represents a directory in the filesystem
      *
-     * @param {...string} dirPath - The directory.  Any trailing directory separators
-     * will be removed.
+     * @param {...Directory|string} dirPath - The directory.  Multiple arguments will be
+     * joined using path.join().  Any trailing directory separators will be removed.
      */
     function Directory(dirPath) {
 
-        var priv = {dirPath: path.join.apply(null, arguments)};
+        var pathHelpers = require("./pathHelpers");
+
+        var priv = {
+            dirPath: pathHelpers.reducePathParts(Array.prototype.slice.call(arguments))
+        };
 
         // Remove trailing directory seperator characters.
         while (S(priv.dirPath).endsWith(path.sep)) {
