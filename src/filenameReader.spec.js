@@ -6,6 +6,7 @@ var filenameReader = require("./filenameReader");
 
 
 describe("filenameReader", function () {
+    "use strict";
 
     describe("getDate", function () {
 
