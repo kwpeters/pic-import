@@ -12,8 +12,8 @@ var File = (function () {
      *
      * @class
      * @classdesc Represents a file in the filesystem
-     * @param {...string} filePath - The file's filePath.  Multiple values may be given,
-     * because pathHelpers.reducePathParts() is used to build the file's path.
+     * @param {...Directory|string} filePath - The file's filePath.  Multiple values may
+     * be given, because pathHelpers.reducePathParts() is used to build the file's path.
      */
     function File(filePath) {
         var priv;
