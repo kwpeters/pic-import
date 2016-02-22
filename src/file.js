@@ -193,6 +193,89 @@ var File = (function () {
 
 
         /**
+         * Moves this file to the specified destination.
+         * @method
+         * @param {Directory|File} destDirOrFile - The destination directory or file name
+         * @param {string} [destFilename] - If destDirOrFile is a Directory, this optional
+         * parameter can specify the name of the destination file.  If not specified, the
+         * file name of this file is used.
+         * @returns {Promise} A promise that is resolved with the destination File object
+         * if successful.  This promise is rejected if an error occurred.
+         */
+        this.move = function move(destDirOrFile, destFilename) {
+            var dfd = q.defer(),
+                srcFileParts = this.split(),
+                destFile;
+
+            if (destDirOrFile instanceof File) {
+                // The caller has specified the destination directory and file name in the
+                // form of a File.
+                destFile = destDirOrFile;
+            } else if (destDirOrFile instanceof Directory) {
+                // The caller has specified the destination directory and optionally a new
+                // file name.
+
+                if (destFilename === undefined) {
+                    destFile = new File(destDirOrFile.toString(), srcFileParts[1] + srcFileParts[2]);
+                } else {
+                    destFile = new File(destDirOrFile.toString(), destFilename);
+                }
+            }
+
+            fs.move(priv.filePath, destFile.toString(), {clobber: true}, function (err) {
+                if (err) {
+                    dfd.reject(err);
+                    return;
+                }
+
+                dfd.resolve(destFile);
+            });
+
+
+            return dfd.promise;
+        };
+
+
+        /**
+         * Moves this file to the specified destination.
+         * @method
+         * @param {Directory|File} destDirOrFile - The destination directory or file name
+         * @param {string} [destFilename] - If destDirOrFile is a Directory, this optional
+         * parameter can specify the name of the destination file.  If not specified, the
+         * file name of this file is used.
+         * @returns {File} A File object representing the destination file
+         */
+        this.moveSync = function moveSync(destDirOrFile, destFilename) {
+
+            var srcFileParts = this.split(),
+                destFile;
+
+            if (destDirOrFile instanceof File) {
+                // The caller has specified the destination directory and file name in the
+                // form of a File.
+                destFile = destDirOrFile;
+            } else if (destDirOrFile instanceof Directory) {
+                // The caller has specified the destination directory and optionally a new
+                // file name.
+
+                if (destFilename === undefined) {
+                    destFile = new File(destDirOrFile.toString(), srcFileParts[1] + srcFileParts[2]);
+                } else {
+                    destFile = new File(destDirOrFile.toString(), destFilename);
+                }
+            }
+
+            // There is no easy way to move a file using fs.  fs.renameSync() will not
+            // work when crossing partitions or using a virtual filesystem that does not
+            // support moving files.  As a fallback, we will copy the file and then delete
+            // this file.
+            this.copySync(destFile);
+            fs.unlinkSync(priv.filePath);
+            return destFile;
+        };
+
+
+        /**
          * Writes the specified text to this file.
          * @method
          * @param {string} text - The text to be written to this file

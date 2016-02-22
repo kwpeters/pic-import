@@ -202,7 +202,6 @@ describe("File", function () {
                 }
             );
 
-
         });
 
 
@@ -283,6 +282,212 @@ describe("File", function () {
                     // It should equal the size of newFile.
                     destFile = newFile.copySync(origFile);
                     expect(destFile.statsSync().size).toEqual(newSize);
+                }
+            );
+
+
+        });
+
+
+        describe("move()", function () {
+
+            var tmpDir  = new Directory("tmp"),
+                destDir = new Directory(tmpDir, "dest"),
+                srcDir  = new Directory(tmpDir, "src"),
+                srcFile;
+
+            beforeEach(function () {
+                tmpDir.emptySync();
+                srcFile = new File("test/input/2015-03-11 09.05.32.jpg").copySync(srcDir);
+            });
+
+
+            it("should move the file to the specified destination directory",
+                function (done) {
+
+                    srcFile.move(destDir)
+                        .then(
+                            function (destFile) {
+                                expect(destFile.toString())
+                                    .toEqual("tmp/dest/2015-03-11 09.05.32.jpg");
+                                expect(destFile.existsSync()).toBeTruthy();
+                                expect(srcFile.existsSync()).toBeFalsy();
+                                done();
+                            }
+                        );
+                }
+            );
+
+
+            it("should rename the file when a directory and filename is specified",
+                function (done) {
+
+                    srcFile.move(destDir, "foo.jpg")
+                        .then(
+                            function (destFile) {
+                                expect(destFile.toString()).toEqual("tmp/dest/foo.jpg");
+                                expect(destFile.existsSync()).toBeTruthy();
+                                expect(srcFile.existsSync()).toBeFalsy();
+                                done();
+                            }
+                        );
+                }
+            );
+
+
+            it("should rename the file when a destination File is specified",
+                function (done) {
+                    var destFile = new File(destDir, "foo2.jpg");
+
+                    srcFile.move(destFile)
+                        .then(
+                            function (destFile) {
+                                expect(destFile.toString()).toEqual("tmp/dest/foo2.jpg");
+                                expect(destFile.existsSync()).toBeTruthy();
+                                expect(srcFile.existsSync()).toBeFalsy();
+                                done();
+                            }
+                        );
+                }
+            );
+
+
+            it("should reject if the source file does not exist",
+                function (done) {
+                    var srcFile = new File("test/input/does_not_exist.jpg");
+
+                    srcFile.move(destDir)
+                        .catch(
+                            function () {
+                                var destFile = new File(destDir, "does_not_exist.jpg");
+                                expect(destFile.existsSync()).toBeFalsy();
+                                done();
+                            }
+                        );
+
+                }
+            );
+
+
+            it("should overwrite the destination file if it already exists",
+                function (done) {
+
+                    var origFile,
+                        origSize,
+                        newFile,
+                        newSize;
+
+                    // Create a small text file and get its size.
+                    origFile = new File(destDir, "test.txt");
+                    origFile.writeSync("abc");
+                    origSize = origFile.statsSync().size;
+
+
+                    // Create another file and get its size.
+                    newFile = new File(destDir, "source.txt");
+                    newFile.writeSync("abcdefghijklmnopqrstuvwxyz");
+                    newSize = newFile.statsSync().size;
+
+
+                    // Move newFile over origFile.  Get the size of the resulting file.
+                    // It should equal the size of newFile.
+
+                    newFile.move(origFile)
+                        .then(
+                            function (destFile) {
+                                expect(destFile.statsSync().size).toEqual(newSize);
+                                expect(newFile.existsSync()).toBeFalsy();
+                                done();
+                            }
+                        );
+                }
+            );
+
+        });
+
+
+        describe("moveSync()", function () {
+
+            var tmpDir  = new Directory("tmp"),
+                destDir = new Directory(tmpDir, "dest"),
+                srcDir  = new Directory(tmpDir, "src"),
+                srcFile;
+
+            beforeEach(function () {
+                tmpDir.emptySync();
+                srcFile = new File("test/input/2015-03-11 09.05.32.jpg").copySync(srcDir);
+            });
+
+
+            it("should copy the file to the specified destination directory",
+                function () {
+
+                    var destFile = srcFile.moveSync(destDir);
+                    expect(destFile.toString()).toEqual("tmp/dest/2015-03-11 09.05.32.jpg");
+                    expect(destFile.existsSync()).toBeTruthy();
+                    expect(srcFile.existsSync()).toBeFalsy();
+                }
+            );
+
+
+            it("should rename the file when a directory and filename is specified",
+                function () {
+                    var destFile = srcFile.moveSync(destDir, "foo.jpg");
+                    expect(destFile.toString()).toEqual("tmp/dest/foo.jpg");
+                    expect(destFile.existsSync()).toBeTruthy();
+                    expect(srcFile.existsSync()).toBeFalsy();
+                }
+            );
+
+
+            it("should rename the file when a destination File is specified",
+                function () {
+                    var destFile = new File(destDir, "foo2.jpg");
+
+                    destFile = srcFile.moveSync(destFile);
+                    expect(destFile.toString()).toEqual("tmp/dest/foo2.jpg");
+                    expect(destFile.existsSync()).toBeTruthy();
+                    expect(srcFile.existsSync()).toBeFalsy();
+                }
+            );
+
+
+            it("should reject if the source file does not exist",
+                function () {
+                    var srcFile = new File("test/input/does_not_exist.jpg");
+
+                    expect(function () {srcFile.moveSync(destDir);}).toThrow();
+                    expect(new File(destDir.toString(), "does_not_exist.jpg").existsSync()).toBeFalsy();
+                }
+            );
+
+
+            it("should overwrite the destination file if it already exists",
+                function () {
+
+                    var origFile,
+                        origSize,
+                        newFile,
+                        newSize,
+                        destFile;
+
+                    // Create a small text file and get its size.
+                    origFile = new File(destDir, "test.txt");
+                    origFile.writeSync("abc");
+                    origSize = origFile.statsSync().size;
+
+
+                    // Create another file and get its size.
+                    newFile = new File(destDir, "source.txt");
+                    newFile.writeSync("abcdefghijklmnopqrstuvwxyz");
+                    newSize = newFile.statsSync().size;
+
+
+                    // Copy newFile over origFile.  Get the size of the copied file.
+                    // It should equal the size of newFile.
+                    destFile = newFile.moveSync(origFile);
+                    expect(destFile.statsSync().size).toEqual(newSize);
+                    expect(newFile.existsSync()).toBeFalsy();
                 }
             );
 
