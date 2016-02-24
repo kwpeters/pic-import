@@ -1,39 +1,6 @@
-var exifReader   = require("./exifReader"),
-    DatestampDir = require("./datestampDir"),
-    File         = require("./file");
-
-//region Helper Functions
-
-/**
- * Creates a map in which datestamps are the keys and the values are the subdirectories
- * within libraryDir corresponding to those dates.
- *
- * @param {Directory} libraryDir - The library directory to be analyzed
- * @returns {Promise} A promise for the generated map
- */
-function createDateDirMap(libraryDir) {
-    "use strict";
-
-    var subdirs;
-
-    subdirs = libraryDir.getSubdirectories()
-        .done(function (subdirs) {
-            // We are only concerned with the subdirectories that have a date in them.
-            return subdirs.reduce(
-                function (prev, curSubdir) {
-                    var datestamp = DatestampDir.test(curSubdir);
-                    if (datestamp) {
-                        prev[datestamp.toString()] = curSubdir;
-                    }
-
-                    return prev;
-                },
-                {}
-            );
-        });
-}
-
-//endregion
+var DatestampDir = require("./datestampDir"),
+    File         = require("./file"),
+    Directory    = require("./directory");
 
 
 var PhotoLibrary = (function () {
@@ -55,8 +22,8 @@ var PhotoLibrary = (function () {
         }
 
         var priv = {
-            rootDir:     rootDir,
-            dateDirMapP: createDateDirMap(rootDir)
+            rootDir:           rootDir,
+            dateDirMapPromise: createDateDirMap(rootDir)
         };
 
 
@@ -67,6 +34,10 @@ var PhotoLibrary = (function () {
          * @returns {Promise} ReturnDescription
          */
         this.import = function importPhoto(file) {
+            var filenameReader = require("./filenameReader"),
+                Datestamp      = require("./datestamp"),
+                exifReader     = require("./exifReader");
+
             // todo: Implement this.
 
             if (!(file instanceof File)) {
@@ -78,18 +49,83 @@ var PhotoLibrary = (function () {
                     if (!fileStats) {
                         throw new Error("File does not exist: " + file.toString());
                     }
+                })
+                .then(function () {
+                    // First, try to extract the file's creation date from the name.
+                    var date = filenameReader.getDate(file.toString());
+                    if (date) {
+                        return new Datestamp(date);
+                    }
 
+                    // Next, try to read the file's creation date from the EXIF data.
+                    return exifReader.getCreateDate(file.toString());
+                })
+                .then(function (datestamp) {
 
+                    return priv.dateDirMapPromise
+                        .then(
+                            function (dateDirMap) {
+                                if (dateDirMap[datestamp]) {
+                                    // A directory corresponding to the imported file's
+                                    // datestamp already exists.  Move the file.
+                                    return file.move(dateDirMap[datestamp]);
+                                } else {
 
+                                    // A directory for the datestamp does not exist.
+                                    // Create it.
+
+                                    var datestampedDir = new Directory(priv.rootDir, datestamp);
+                                    return datestampedDir.ensureExists()
+                                        .then(
+                                            function () {
+                                                var importedFile = file.move(datestampedDir);
+
+                                                // Update the map for future use.
+                                                dateDirMap[datestamp] = datestampedDir;
+
+                                                return importedFile;
+                                            }
+                                        );
+                                }
+                            }
+                        );
                 });
-
-
-            //exifReader.getCreateDate(file);
-
-
-
         };
     }
+
+    //region Helper Functions
+    ////////////////////////////////////////////////////////////////////////////////
+
+
+    /**
+     * Creates a map in which Datestamps are the keys and the values are the subdirectories
+     * within libraryDir corresponding to those dates.
+     *
+     * @param {Directory} libraryDir - The library directory to be analyzed
+     * @returns {Promise} A promise for the generated map
+     */
+    function createDateDirMap(libraryDir) {
+
+        return libraryDir.getSubdirectories()
+            .then(function (subdirs) {
+                // We are only concerned with the subdirectories that have a date in them.
+                return subdirs.reduce(
+                    function (prev, curSubdir) {
+                        var datestamp = DatestampDir.test(curSubdir);
+                        if (datestamp) {
+                            prev[datestamp.toString()] = curSubdir;
+                        }
+
+                        return prev;
+                    },
+                    {}
+                );
+            });
+    }
+
+    //endregion
+
+    PhotoLibrary.createDateDirMap = createDateDirMap;
 
     return PhotoLibrary;
 })();
