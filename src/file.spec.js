@@ -61,6 +61,112 @@ describe("File", function () {
         });
 
 
+        // todo: Add tests for equals().
+        
+
+        describe("split()", function () {
+
+            it("should return the three parts of the path",
+                function () {
+                    var f     = new File("../tmp/bar/baz.foo"),
+                        parts = f.split();
+
+                    expect(parts[0]).toEqual("../tmp/bar/");
+                    expect(parts[1]).toEqual("baz");
+                    expect(parts[2]).toEqual(".foo");
+                }
+            );
+
+            it("concatenating the parts should completely reconstruct the original path",
+                function () {
+                    var filePath = "../tmp/bar/baz.foo",
+                        f        = new File(filePath),
+                        parts    = f.split();
+
+                    expect(parts.join("")).toEqual(filePath);
+                }
+            );
+
+
+            it("it should be able to handle a file path with no directory",
+                function () {
+                    var filePath = "baz.txt",
+                        f        = new File(filePath),
+                        parts    = f.split();
+
+                    expect(parts[0]).toEqual("./");
+                }
+            );
+
+
+            it("should be able to handle a file without an extension",
+                function () {
+                    var f     = new File("../tmp/bar/baz"),
+                        parts = f.split();
+
+                    expect(parts[0]).toEqual("../tmp/bar/");
+                    expect(parts[1]).toEqual("baz");
+                    expect(parts[2]).toEqual("");
+                }
+            );
+
+
+            it("should return the name of a dotfile as the basename",
+                function () {
+                    var f     = new File("../tmp/bar/.baz"),
+                        parts = f.split();
+
+                    expect(parts[0]).toEqual("../tmp/bar/");
+                    expect(parts[1]).toEqual(".baz");
+                    expect(parts[2]).toEqual("");
+                }
+            );
+
+        });
+
+
+        describe("getFileName()", function () {
+
+            it("should return just the filename",
+                function () {
+                    var f = new File("../tmp/bar.foo");
+
+                    expect(f.getFileName()).toEqual("bar.foo");
+                }
+            );
+
+
+            it("should return something appropriate for a dotfile",
+                function () {
+                    var f = new File("../tmp/.foo");
+                    expect(f.getFileName()).toEqual(".foo");
+                }
+            );
+
+
+            it("should return something appropriate for a file with no extension",
+                function () {
+                    var f = new File("../tmp/foo");
+                    expect(f.getFileName()).toEqual("foo");
+                }
+            );
+        });
+
+
+        describe("directory()", function () {
+
+            it("should return the directory of this file",
+                function () {
+                    var dir  = new Directory("../foo/bar"),
+                        file = new File(dir.toString(), "baz.txt");
+
+                    expect(file.directory().toString()).toEqual(dir.toString());
+                }
+            );
+
+        });
+
+
         describe("exists()", function () {
 
             it("should resolve with the file's stats when the file exists",
@@ -92,6 +198,8 @@ describe("File", function () {
             );
 
         });
+
+        // todo:  Add tests for existsSync()
 
 
         describe("copy()", function () {
@@ -494,109 +602,6 @@ describe("File", function () {
 
         });
 
-
-        describe("split()", function () {
-
-            it("should return the three parts of the path",
-                function () {
-                    var f     = new File("../tmp/bar/baz.foo"),
-                        parts = f.split();
-
-                    expect(parts[0]).toEqual("../tmp/bar/");
-                    expect(parts[1]).toEqual("baz");
-                    expect(parts[2]).toEqual(".foo");
-                }
-            );
-
-            it("concatenating the parts should completely reconstruct the original path",
-                function () {
-                    var filePath = "../tmp/bar/baz.foo",
-                        f        = new File(filePath),
-                        parts    = f.split();
-
-                    expect(parts.join("")).toEqual(filePath);
-                }
-            );
-
-
-            it("it should be able to handle a file path with no directory",
-                function () {
-                    var filePath = "baz.txt",
-                        f        = new File(filePath),
-                        parts    = f.split();
-
-                    expect(parts[0]).toEqual("./");
-                }
-            );
-
-
-            it("should be able to handle a file without an extension",
-                function () {
-                    var f     = new File("../tmp/bar/baz"),
-                        parts = f.split();
-
-                    expect(parts[0]).toEqual("../tmp/bar/");
-                    expect(parts[1]).toEqual("baz");
-                    expect(parts[2]).toEqual("");
-                }
-            );
-
-
-            it("should return the name of a dotfile as the basename",
-                function () {
-                    var f     = new File("../tmp/bar/.baz"),
-                        parts = f.split();
-
-                    expect(parts[0]).toEqual("../tmp/bar/");
-                    expect(parts[1]).toEqual(".baz");
-                    expect(parts[2]).toEqual("");
-                }
-            );
-
-        });
-        
-        
-        describe("getFileName()", function () {
-
-            it("should return just the filename",
-                function () {
-                    var f = new File("../tmp/bar.foo");
-
-                    expect(f.getFileName()).toEqual("bar.foo");
-                }
-            );
-
-            
-            it("should return something appropriate for a dotfile",
-                function () {
-                    var f = new File("../tmp/.foo");
-                    expect(f.getFileName()).toEqual(".foo");
-                }
-            );
-
-
-            it("should return something appropriate for a file with no extension",
-                function () {
-                    var f = new File("../tmp/foo");
-                    expect(f.getFileName()).toEqual("foo");
-                }
-            );
-        });
-
-
-        describe("directory()", function () {
-
-            it("should return the directory of this file",
-                function () {
-                    var dir  = new Directory("../foo/bar"),
-                        file = new File(dir.toString(), "baz.txt");
-
-                    expect(file.directory().toString()).toEqual(dir.toString());
-                }
-            );
-
-        });
-        
         
         describe("write()", function () {
 
@@ -634,6 +639,7 @@ describe("File", function () {
 
         });
 
+
         describe("writeSync()", function () {
 
 
@@ -659,6 +665,12 @@ describe("File", function () {
                 }
             );
         });
+
+
+        // todo: Add tests for read().
+
+
+        // todo: Add tests for readSync().
 
     });
 

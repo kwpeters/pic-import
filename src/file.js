@@ -37,6 +37,9 @@ var File = (function () {
         };
 
 
+        // todo: Add equals().
+
+
         /**
          * Splits this file's path into 3 parts: directory (including trailing path
          * seperator), basename, and extension (including initial ".").
