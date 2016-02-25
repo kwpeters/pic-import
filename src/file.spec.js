@@ -554,6 +554,34 @@ describe("File", function () {
             );
 
         });
+        
+        
+        describe("getFileName()", function () {
+
+            it("should return just the filename",
+                function () {
+                    var f = new File("../tmp/bar.foo");
+
+                    expect(f.getFileName()).toEqual("bar.foo");
+                }
+            );
+
+            
+            it("should return something appropriate for a dotfile",
+                function () {
+                    var f = new File("../tmp/.foo");
+                    expect(f.getFileName()).toEqual(".foo");
+                }
+            );
+
+
+            it("should return something appropriate for a file with no extension",
+                function () {
+                    var f = new File("../tmp/foo");
+                    expect(f.getFileName()).toEqual("foo");
+                }
+            );
+        });
 
 
         describe("directory()", function () {

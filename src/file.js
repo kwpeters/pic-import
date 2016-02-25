@@ -57,6 +57,17 @@ var File = (function () {
 
 
         /**
+         * Returns the file name part of this file's path
+         * @method
+         * @returns {string} The file name part of this file's path
+         */
+        this.getFileName = function getFileName() {
+            var parts = this.split();
+            return parts[1] + parts[2];
+        };
+
+
+        /**
          * Gets a Directory object representing the directory portion of this file's path.
          * @method
          * @returns {Directory} A directory object representing the directory portion of
