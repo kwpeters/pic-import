@@ -49,7 +49,7 @@ describe("File", function () {
         });
 
 
-        describe("toString", function () {
+        describe("toString()", function () {
 
             it("shouldreturn a string representation",
                 function () {
@@ -61,8 +61,27 @@ describe("File", function () {
         });
 
 
-        // todo: Add tests for equals().
-        
+        describe("equals()", function () {
+            it("should return true for two equal Files",
+                function () {
+                    var file1 = new File("foo/bar/baz.txt"),
+                        file2 = new File("foo/bar/baz.txt");
+
+                    expect(file1.equals(file2)).toBe(true);
+                }
+            );
+
+
+            it("should return false for two files that are not equal",
+                function () {
+                    var file1 = new File("foo/bar/baz.txt"),
+                        file2 = new File("foo/baz/bar.txt");
+
+                    expect(file1.equals(file2)).toBe(false);
+                }
+            );
+        });
+
 
         describe("split()", function () {
 

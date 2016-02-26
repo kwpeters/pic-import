@@ -37,7 +37,16 @@ var File = (function () {
         };
 
 
-        // todo: Add equals().
+        /**
+         * Determines whether this File is equal to the specified File.
+         * @method
+         * @param {File} other - The File to comppare against
+         * @returns {boolean} true if the files represent the same file path.
+         * false otherwise.
+         */
+        this.equals = function equals(other) {
+            return this.toString() === other.toString();
+        };
 
 
         /**
