@@ -218,7 +218,29 @@ describe("File", function () {
 
         });
 
-        // todo:  Add tests for existsSync()
+
+        describe("existsSync()", function () {
+
+            it("should return the file's stats when the file exists",
+                function () {
+
+                    var file  = new File(__filename),
+                        stats = file.existsSync();
+
+                    expect(stats).toBeDefined();
+                }
+            );
+
+
+            it("should return false when the file does not exist.",
+                function () {
+                    var file  = new File("./foo/bar.txt"),
+                        stats = file.existsSync();
+                    expect(stats).toBe(false);
+                }
+            );
+
+        });
 
 
         describe("copy()", function () {
