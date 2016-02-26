@@ -11,7 +11,6 @@ var path      = require("path"),
 describe("File", function () {
     "use strict";
 
-
     describe("instance", function () {
 
         describe("constructor", function () {
@@ -708,10 +707,78 @@ describe("File", function () {
         });
 
 
-        // todo: Add tests for read().
+        describe("read", function () {
+
+            var tmpDir = new Directory("tmp");
+
+            beforeEach(function () {
+                tmpDir.emptySync();
+            });
 
 
-        // todo: Add tests for readSync().
+            it("should be able to read the contents of a text file.",
+                function (done) {
+                    var file = new File(tmpDir, "testFile.txt");
+                    file.writeSync("xyzzy");
+
+                    file.read().done(function (text) {
+                        expect(text).toEqual("xyzzy");
+                        done();
+                    });
+                }
+            );
+
+
+            it("should reject if the file being read does not exist",
+                function (done) {
+                    var file = new File(tmpDir, "testFile.txt");
+
+                    file.read()
+                        .then(
+                            function (text) {
+                                console.log(text);
+                            }
+                        )
+                        .catch(
+                            function () {
+                                done();
+                            }
+                        );
+                }
+            );
+
+        });
+
+
+        describe("readSync", function () {
+
+            var tmpDir = new Directory("tmp");
+
+            beforeEach(function () {
+                tmpDir.emptySync();
+            });
+
+
+            it("should be able to read the contents of a text file.",
+                function () {
+                    var file = new File(tmpDir, "testFile.txt");
+                    file.writeSync("xyzzy");
+
+                    var text = file.readSync();
+
+                    expect(text).toEqual("xyzzy");
+                }
+            );
+
+
+            it("should reject if the file being read does not exist",
+                function () {
+                    var file = new File(tmpDir, "testFile.txt");
+                    expect(function () {file.readSync();}).toThrow();
+                }
+            );
+
+        });
 
     });
 
