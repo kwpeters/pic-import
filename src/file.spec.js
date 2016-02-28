@@ -60,6 +60,18 @@ describe("File", function () {
         });
 
 
+        describe("absPath()", function () {
+
+            it("should resolve a file's absolute path",
+                function () {
+                    var file = new File(__filename);
+                    expect(file.absPath()).toEqual("/Users/kwpeters/dev/pic-import/src/file.spec.js");
+                }
+            );
+
+        });
+
+
         describe("equals()", function () {
             it("should return true for two equal Files",
                 function () {

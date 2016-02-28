@@ -38,6 +38,23 @@ var File = (function () {
 
 
         /**
+         * Returns the absolute path of this file.  This does not guarantee that this file
+         * exists.
+         * @method
+         * @returns {string} The absolute path of this file
+         */
+        this.absPath = function () {
+            return path.resolve(priv.filePath);
+        };
+
+        // todo: Update equals() to use abspath
+
+        // todo: Add absPath() to Directory
+        // todo: Create Directory.absPath() unit tests
+        // todo: Update Directory.equals() to use absPath().
+
+
+        /**
          * Determines whether this File is equal to the specified File.
          * @method
          * @param {File} other - The File to comppare against
