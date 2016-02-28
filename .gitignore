@@ -1,8 +1,2 @@
-# Emacs temporary files
-.tern-port
-
-# Webstorm files
-/.idea/
-
 /node_modules/
 /tmp/
