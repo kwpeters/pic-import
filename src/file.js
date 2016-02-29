@@ -47,12 +47,6 @@ var File = (function () {
             return path.resolve(priv.filePath);
         };
 
-        // todo: Update equals() to use abspath
-
-        // todo: Add absPath() to Directory
-        // todo: Create Directory.absPath() unit tests
-        // todo: Update Directory.equals() to use absPath().
-
 
         /**
          * Determines whether this File is equal to the specified File.
@@ -62,7 +56,7 @@ var File = (function () {
          * false otherwise.
          */
         this.equals = function equals(other) {
-            return this.toString() === other.toString();
+            return this.absPath() === other.absPath();
         };
 
 

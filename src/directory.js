@@ -38,6 +38,18 @@ var Directory = (function () {
             return priv.dirPath;
         };
 
+
+        /**
+         * Returns the absolute path of this directory.  This does not guarantee that this
+         * directory exists.
+         * @method
+         * @returns {string} The absolute path of this directory
+         */
+        this.absPath = function absPath() {
+            return path.resolve(priv.dirPath);
+        };
+
+
         /**
          * Determines whether this Directory is equal to the specified directory.
          * @method
@@ -46,9 +58,7 @@ var Directory = (function () {
          * false otherwise.
          */
         this.equals = function (other) {
-            // We will just base equality on whether or not the represented
-            // paths are equal.
-            return this.toString() === other.toString();
+            return this.absPath() === other.absPath();
         };
 
 

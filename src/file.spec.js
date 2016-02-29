@@ -91,6 +91,15 @@ describe("File", function () {
                     expect(file1.equals(file2)).toBe(false);
                 }
             );
+
+            it("should return false for two files with the same name in different directories",
+                function () {
+                    var file1 = new File("../baz.txt"),
+                        file2 = new File("../../baz.txt");
+
+                    expect(file1.equals(file2)).toBe(false);
+                }
+            );
         });
 
 

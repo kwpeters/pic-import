@@ -65,6 +65,17 @@ describe(
                 });
 
 
+                describe("absPath()", function () {
+
+                    it("should resolve a directory's absolute path",
+                        function () {
+                            var dir = new Directory(__dirname);
+                            expect(dir.absPath()).toEqual("/Users/kwpeters/dev/pic-import/src");
+                        }
+                    );
+
+                });
+
                 describe("equals()", function () {
 
                     it("should return true for two equal directories",
@@ -81,6 +92,16 @@ describe(
                         function () {
                             var dir1 = new Directory("foo/bar/"),
                                 dir2 = new Directory("foo/baz");
+
+                            expect(dir1.equals(dir2)).toBe(false);
+                        }
+                    );
+
+
+                    it("should return false for two directories named the same but in different folders",
+                        function () {
+                            var dir1 = new Directory("bar"),
+                                dir2 = new Directory("../bar");
 
                             expect(dir1.equals(dir2)).toBe(false);
                         }
