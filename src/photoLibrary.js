@@ -31,7 +31,8 @@ var PhotoLibrary = (function () {
          * Imports the specified file into this library.
          * @method
          * @param {File} file - The file to import
-         * @returns {Promise} ReturnDescription
+         * @returns {Promise} A promise that is resolved with the imported File object if
+         * the file is successfully imported.  The promise is rejected if an error occurs.
          */
         this.import = function importPhoto(file) {
             var filenameReader = require("./filenameReader"),
@@ -65,10 +66,22 @@ var PhotoLibrary = (function () {
                     return priv.dateDirMapPromise
                         .then(
                             function (dateDirMap) {
+                                var destFile;
+
                                 if (dateDirMap[datestamp]) {
                                     // A directory corresponding to the imported file's
-                                    // datestamp already exists.  Move the file.
-                                    return file.move(dateDirMap[datestamp]);
+                                    // datestamp already exists.
+
+                                    // If the source and destination paths are the same
+                                    // then there is nothing to do.  This can happen
+                                    // when the file we are importing is already inside
+                                    // the photo library.
+                                    destFile = new File(dateDirMap[datestamp], file.getFileName());
+                                    if (file.equals(destFile)) {
+                                        return destFile;
+                                    } else {
+                                        return file.move(dateDirMap[datestamp]);
+                                    }
                                 } else {
 
                                     // A directory for the datestamp does not exist.

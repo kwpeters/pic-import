@@ -1,4 +1,8 @@
 var path         = require("path"),
+    _            = require("lodash"),
+    q            = require("q"),
+    Directory    = require("./directory"),
+    File         = require("./file"),
     PhotoLibrary = require("./photoLibrary"),
     glob         = require("glob-all"),
     argv         = require("yargs")
@@ -27,12 +31,28 @@ var path         = require("path"),
 function main() {
     "use strict";
 
-    var photoLibrary = new PhotoLibrary(argv.libraryDir),
-        importGlobs  = [
-            path.join(argv.importDir, "**", "*.jpg"),
-            path.join(argv.importDir, "**", "*.JPG")
+    var photoLibraryDir = new Directory(argv.libraryDir),
+        photoLibrary    = new PhotoLibrary(photoLibraryDir),
+        importGlobs     = [
+            path.join(argv.importDir, "**", "*.*")
         ],
-        importFiles  = glob.sync(importGlobs);
+        importFiles     = glob.sync(importGlobs),
+        promises;
+
+
+    console.log("Found " + importFiles.length + " files to import.");
+    promises = importFiles.map(function (importFile) {
+        photoLibrary.import(new File(importFile));
+    });
+
+    q.all(promises)
+        .then(
+            function (importedFiles) {
+                console.log("Successfully imported " + importedFiles.length + " files.");
+            }
+        )
+        .done();
+
 }
 
 
