@@ -1,6 +1,6 @@
 var path         = require("path"),
     _            = require("lodash"),
-    q            = require("q"),
+    q            = require("q"), // todo: Replace q with es6-promise polyfill
     Directory    = require("./directory"),
     File         = require("./file"),
     PhotoLibrary = require("./photoLibrary"),

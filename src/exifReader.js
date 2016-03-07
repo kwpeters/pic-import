@@ -1,4 +1,4 @@
-var q         = require("q"),
+var q         = require("q"), // todo: Replace q with es6-promise polyfill
     ExifImage = require("exif").ExifImage,
     Datestamp = require("./datestamp"),
     dateRegex = /(\d{4}):(\d{2}):(\d{2})/;

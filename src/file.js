@@ -1,7 +1,7 @@
-var fs   = require("fs-extra"),
-    path = require("path"),
-    q    = require("q"),
-    Directory = require("./directory"),
+var fs          = require("fs-extra"),
+    path        = require("path"),
+    q           = require("q"), // todo: Replace q with es6-promise polyfill
+    Directory   = require("./directory"),
     pathHelpers = require("./pathHelpers");
 
 var File = (function () {

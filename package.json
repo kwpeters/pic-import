@@ -9,6 +9,7 @@
   "author": "Kevin Peters",
   "license": "MIT",
   "dependencies": {
+    "es6-promise": "^3.1.2",
     "exif": "^0.4.0",
     "fs-extra": "^0.26.3",
     "glob-all": "^3.0.1",
@@ -19,6 +20,9 @@
   },
   "devDependencies": {
     "gulp": "^3.9.0",
+    "gulp-helpers": "kwpeters/gulp-helpers#9a9ea2fe",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-typescript": "^2.12.1",
     "gulp-util": "^3.0.7",
     "jasmine-node": "^1.14.5"
   }

@@ -1,31 +1,37 @@
 var gulp = require("gulp"),
-    gutil = require("gulp-util"),
-    q = require("q");
+    gutil = require("gulp-util");
 
+require('es6-promise').polyfill();
 
 (function () {
     "use strict";
 
+    ////////////////////////////////////////////////////////////////////////////////
     gulp.task("test", function () {
-        var exec = require('child_process').exec,
-            dfd      = q.defer(),
-            cmd;
+        
+        return new Promise(function (resolve, reject) {
 
-        cmd = 'node ./node_modules/jasmine-node/bin/jasmine-node --color ./src/';
+            var gh  = require("gulp-helpers"),
+                cmd = "node ./node_modules/jasmine-node/bin/jasmine-node --color ./src/";
 
-        exec(cmd, {cwd: __dirname}, function (err, stdout/*, stderr*/) {
-            if (err) {
-                gutil.log('FAILED');
-                gutil.log(stdout);
-                dfd.reject();
-            } else {
-                gutil.log('SUCCESS');
-                gutil.log(stdout);
-                dfd.resolve();
-            }
+            gh.exec(cmd, {cwd: __dirname})
+                .then(
+                    function (stdout) {
+                        gutil.log('SUCCESS');
+                        gutil.log(stdout);
+                    }
+                )
+                .catch(
+                    function (err) {
+                        gutil.log('FAILED');
+                        gutil.log(err.stdout);
+                    }
+                );
         });
+    });
 
-        return dfd.promise;
+
+    gulp.task("build", function () {
     });
 
 
