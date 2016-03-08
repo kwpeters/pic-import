@@ -1,6 +1,6 @@
 var fs          = require("fs-extra"),
     path        = require("path"),
-    q           = require("q"), // todo: Replace q with es6-promise polyfill
+    q           = require("q"),
     S           = require("string");
 
 var Directory = (function () {

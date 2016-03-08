@@ -6,7 +6,7 @@
 
 
 
-var q            = require("q"), // todo: Replace q with es6-promise polyfill
+var q            = require("q"),
     PhotoLibrary = require("./photoLibrary"),
     Directory    = require("./directory"),
     File         = require("./file"),
